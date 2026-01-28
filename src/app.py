@@ -5,7 +5,7 @@ A super simple FastAPI application that allows students to view and sign up
 for extracurricular activities at Mergington High School.
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 import os
@@ -21,6 +21,42 @@ app.mount("/static", StaticFiles(directory=os.path.join(Path(__file__).parent,
 
 # In-memory activity database
 activities = {
+    "Basketball": {
+        "description": "Team sport focusing on skill development and competitive play",
+        "schedule": "Mondays and Wednesdays, 4:00 PM - 5:30 PM",
+        "max_participants": 15,
+        "participants": ["alex@mergington.edu"]
+        },
+        "Tennis Club": {
+        "description": "Learn tennis techniques and participate in friendly matches",
+        "schedule": "Saturdays, 10:00 AM - 12:00 PM",
+        "max_participants": 10,
+        "participants": ["james@mergington.edu"]
+        },
+        "Debate Team": {
+        "description": "Develop public speaking and critical thinking skills through debates",
+        "schedule": "Wednesdays, 3:30 PM - 5:00 PM",
+        "max_participants": 16,
+        "participants": ["lucas@mergington.edu", "ava@mergington.edu"]
+        },
+        "Math Olympiad": {
+        "description": "Solve challenging math problems and prepare for competitions",
+        "schedule": "Tuesdays, 4:00 PM - 5:30 PM",
+        "max_participants": 20,
+        "participants": ["rachel@mergington.edu"]
+        },
+        "Drama Club": {
+        "description": "Perform in theatrical productions and develop acting skills",
+        "schedule": "Thursdays, 3:30 PM - 5:00 PM",
+        "max_participants": 25,
+        "participants": ["isabella@mergington.edu", "noah@mergington.edu"]
+        },
+        "Art Studio": {
+        "description": "Explore painting, drawing, and various art mediums",
+        "schedule": "Fridays, 4:00 PM - 5:30 PM",
+        "max_participants": 18,
+        "participants": ["grace@mergington.edu"]
+        },
     "Chess Club": {
         "description": "Learn strategies and compete in chess tournaments",
         "schedule": "Fridays, 3:30 PM - 5:00 PM",
@@ -61,7 +97,14 @@ def signup_for_activity(activity_name: str, email: str):
 
     # Get the specific activity
     activity = activities[activity_name]
-
+# Validate student is not already signed up
+    if email in activity["participants"]:
+        raise HTTPException(status_code=400, detail="Student already signed up for this activity")  
     # Add student
     activity["participants"].append(email)
     return {"message": f"Signed up {email} for {activity_name}"}
+
+@app.delete("/participants/{participant_id}")
+async def delete_participant(participant_id: int):
+    # Logic to unregister the participant
+    return {"message": "Participant unregistered successfully"}
