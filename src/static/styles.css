@@ -168,3 +168,7 @@ footer {
   padding: 20px;
   color: #666;
 }
+
+ul {
+  list-style-type: none;
+}
